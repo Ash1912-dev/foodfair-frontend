@@ -1,6 +1,5 @@
 const BACKEND_URL = 'https://foodfair-backend.onrender.com/api';
 
-
 // --------------------- Utility ---------------------
 function generateOrderId() {
   const timestamp = Date.now();
@@ -24,33 +23,33 @@ if (form) {
   const menuItems = document.querySelectorAll('.menu-item');
   const totalDisplay = document.getElementById('totalPrice');
   const selectedItemsDisplay = document.getElementById('selectedItems');
-  const submitButton = document.querySelector('button[type="submit"]');
   const selectedItems = [];
 
   menuItems.forEach(item => {
     item.addEventListener('click', () => {
       const itemName = item.dataset.name;
       const itemPrice = parseFloat(item.dataset.price);
-      const index = selectedItems.findIndex(i => i.name === itemName);
+      const existing = selectedItems.find(i => i.name === itemName);
 
-      if (index > -1) {
-        selectedItems.splice(index, 1);
-        item.classList.remove('selected');
+      if (existing) {
+        existing.quantity += 1;
       } else {
-        selectedItems.push({ name: itemName, price: itemPrice });
+        selectedItems.push({ name: itemName, price: itemPrice, quantity: 1 });
         item.classList.add('selected');
       }
 
-      const total = selectedItems.reduce((sum, i) => sum + i.price, 0);
+      const total = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
       totalDisplay.textContent = total.toFixed(2);
-      selectedItemsDisplay.innerHTML = selectedItems.map(i => `<li>${i.name} - ₹${i.price.toFixed(2)}</li>`).join('');
+
+      selectedItemsDisplay.innerHTML = selectedItems.map(i => `
+        <li>${i.name} x${i.quantity} - ₹${(i.price * i.quantity).toFixed(2)}</li>
+      `).join('');
     });
   });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Check backend toggle switch
     try {
       const res = await fetch(`${BACKEND_URL}/settings`);
       const data = await res.json();
@@ -73,7 +72,7 @@ if (form) {
       orderId: generateOrderId(),
       name,
       items: selectedItems,
-      total: selectedItems.reduce((sum, i) => sum + i.price, 0),
+      total: selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
       timestamp: new Date()
     };
 
@@ -229,7 +228,12 @@ function renderOrders() {
         </div>
       </div>
       <div class="order-items">
-        ${order.items.map(i => `<div class="order-item"><span>${i.name}</span><span>₹${i.price.toFixed(2)}</span></div>`).join('')}
+        ${order.items.map(i => `
+          <div class="order-item">
+            <span>${i.name} x${i.quantity}</span>
+            <span>₹${(i.price * i.quantity).toFixed(2)}</span>
+          </div>
+        `).join('')}
       </div>
       <div class="order-total">Total: ₹${order.total.toFixed(2)}</div>
       <div class="status-controls">
