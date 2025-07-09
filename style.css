@@ -849,3 +849,30 @@ input[type="text"]::placeholder {
 .menu-item.selected {
   border: 2px solid #4CAF50;
 }
+
+.quantity-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quantity-controls button {
+  padding: 4px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background: #eee;
+  transition: background 0.2s ease;
+}
+
+.quantity-controls button:hover {
+  background: #ccc;
+}
+
+.item-qty {
+  font-weight: bold;
+  font-size: 16px;
+}

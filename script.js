@@ -26,37 +26,42 @@ if (form) {
   const selectedItems = [];
 
   menuItems.forEach(item => {
-    const plusBtn = document.createElement('button');
-    plusBtn.className = 'btn-plus';
-    plusBtn.textContent = '➕';
-    item.querySelector('.menu-item-content').appendChild(plusBtn);
-
     const itemName = item.dataset.name;
     const itemPrice = parseFloat(item.dataset.price);
+    const plusBtn = item.querySelector('.btn-plus');
+    const minusBtn = item.querySelector('.btn-minus');
+    const qtySpan = item.querySelector('.item-qty');
 
     plusBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-
+      e.preventDefault();
       const existing = selectedItems.find(i => i.name === itemName);
       if (existing) {
         existing.quantity += 1;
       } else {
         selectedItems.push({ name: itemName, price: itemPrice, quantity: 1 });
-        item.classList.add('selected');
       }
-
+      qtySpan.textContent = getQty(itemName);
       updateCart();
     });
 
-    item.addEventListener('click', () => {
+    minusBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       const index = selectedItems.findIndex(i => i.name === itemName);
-      if (index > -1) {
-        selectedItems.splice(index, 1);
-        item.classList.remove('selected');
-        updateCart();
+      if (index !== -1) {
+        selectedItems[index].quantity -= 1;
+        if (selectedItems[index].quantity <= 0) {
+          selectedItems.splice(index, 1);
+        }
       }
+      qtySpan.textContent = getQty(itemName);
+      updateCart();
     });
   });
+
+  function getQty(itemName) {
+    const item = selectedItems.find(i => i.name === itemName);
+    return item ? item.quantity : 0;
+  }
 
   function updateCart() {
     const total = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -69,6 +74,7 @@ if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Check toggle status
     try {
       const res = await fetch(`${BACKEND_URL}/settings`);
       const data = await res.json();
@@ -111,9 +117,10 @@ if (form) {
           <p>Please show this Order ID at the counter.</p>`;
         resultDiv.classList.add('show');
 
+        // Reset everything
         form.reset();
         selectedItems.length = 0;
-        menuItems.forEach(i => i.classList.remove('selected'));
+        menuItems.forEach(item => item.querySelector('.item-qty').textContent = '0');
         totalDisplay.textContent = '0.00';
         selectedItemsDisplay.innerHTML = '';
 
@@ -129,6 +136,7 @@ if (form) {
     }
   });
 }
+
 
 // --------------------- Admin Login Page ---------------------
 const loginForm = document.getElementById('loginForm');
