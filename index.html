@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funfair Order - Order Your Snacks</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🎪 Funfair Snacks</h1>
+      <p class="subtitle">Order your favorite snacks and enjoy the funfair!</p>
+    </header>
+
+    <div class="order-card">
+      <form id="orderForm">
+        <div class="form-group">
+          <label for="name">👤 Your Name</label>
+          <input type="text" id="name" placeholder="Enter your name" required />
+        </div>
+
+        <div class="form-group">
+          <label>🍽️ Choose Your Snacks</label>
+          <div class="menu-grid">
+            <div class="menu-item" data-name="Samosa" data-price="20">
+              <div class="menu-item-content">
+                <span class="emoji">🥟</span>
+                <h3>Samosa</h3>
+                <p class="description">Crispy and delicious fried snack</p>
+                <div class="price">₹20</div>
+              </div>
+              <div class="selection-indicator"></div>
+            </div>
+
+            <div class="menu-item" data-name="Vada Pav" data-price="25">
+              <div class="menu-item-content">
+                <span class="emoji">🍔</span>
+                <h3>Vada Pav</h3>
+                <p class="description">Mumbai's favorite street food</p>
+                <div class="price">₹25</div>
+              </div>
+              <div class="selection-indicator"></div>
+            </div>
+
+            <div class="menu-item" data-name="Cold Drink" data-price="30">
+              <div class="menu-item-content">
+                <span class="emoji">🥤</span>
+                <h3>Cold Drink</h3>
+                <p class="description">Refreshing chilled beverage</p>
+                <div class="price">₹30</div>
+              </div>
+              <div class="selection-indicator"></div>
+            </div>
+
+            <div class="menu-item" data-name="Popcorn" data-price="15">
+              <div class="menu-item-content">
+                <span class="emoji">🍿</span>
+                <h3>Popcorn</h3>
+                <p class="description">Classic movie snack</p>
+                <div class="price">₹15</div>
+              </div>
+              <div class="selection-indicator"></div>
+            </div>
+
+            <div class="menu-item" data-name="Cotton Candy" data-price="35">
+              <div class="menu-item-content">
+                <span class="emoji">🍭</span>
+                <h3>Cotton Candy</h3>
+                <p class="description">Sweet fluffy cloud of sugar</p>
+                <div class="price">₹35</div>
+              </div>
+              <div class="selection-indicator"></div>
+            </div>
+
+            <div class="menu-item" data-name="Chaat" data-price="40">
+              <div class="menu-item-content">
+                <span class="emoji">🌮</span>
+                <h3>Chaat</h3>
+                <p class="description">Spicy and tangy street food</p>
+                <div class="price">₹40</div>
+              </div>
+              <div class="selection-indicator"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="total-section">
+          <div id="totalPrice">Total: ₹0</div>
+          <div class="selected-items" id="selectedItems"></div>
+        </div>
+
+        <button type="submit" class="btn-order">
+          <span class="btn-text">🎉 Place Order</span>
+          <div class="btn-loading">
+            <div class="spinner"></div>
+            Processing...
+          </div>
+        </button>
+      </form>
+
+      <div id="result" class="result"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2024 Funfair Snacks | Made with ❤️ for your enjoyment</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
