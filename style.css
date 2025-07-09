@@ -832,3 +832,20 @@ input[type="text"]::placeholder {
   margin-left: 4px;
   cursor: pointer;
 }
+
+.btn-plus {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  font-size: 1rem;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  float: right;
+  margin-top: -20px;
+  margin-right: 5px;
+}
+
+.menu-item.selected {
+  border: 2px solid #4CAF50;
+}

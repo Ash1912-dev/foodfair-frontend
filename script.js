@@ -26,11 +26,18 @@ if (form) {
   const selectedItems = [];
 
   menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const itemName = item.dataset.name;
-      const itemPrice = parseFloat(item.dataset.price);
-      const existing = selectedItems.find(i => i.name === itemName);
+    const plusBtn = document.createElement('button');
+    plusBtn.className = 'btn-plus';
+    plusBtn.textContent = '➕';
+    item.querySelector('.menu-item-content').appendChild(plusBtn);
 
+    const itemName = item.dataset.name;
+    const itemPrice = parseFloat(item.dataset.price);
+
+    plusBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      const existing = selectedItems.find(i => i.name === itemName);
       if (existing) {
         existing.quantity += 1;
       } else {
@@ -38,14 +45,26 @@ if (form) {
         item.classList.add('selected');
       }
 
-      const total = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-      totalDisplay.textContent = total.toFixed(2);
+      updateCart();
+    });
 
-      selectedItemsDisplay.innerHTML = selectedItems.map(i => `
-        <li>${i.name} x${i.quantity} - ₹${(i.price * i.quantity).toFixed(2)}</li>
-      `).join('');
+    item.addEventListener('click', () => {
+      const index = selectedItems.findIndex(i => i.name === itemName);
+      if (index > -1) {
+        selectedItems.splice(index, 1);
+        item.classList.remove('selected');
+        updateCart();
+      }
     });
   });
+
+  function updateCart() {
+    const total = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    totalDisplay.textContent = total.toFixed(2);
+    selectedItemsDisplay.innerHTML = selectedItems.map(i =>
+      `<li>${i.name} x${i.quantity} - ₹${(i.price * i.quantity).toFixed(2)}</li>`
+    ).join('');
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
