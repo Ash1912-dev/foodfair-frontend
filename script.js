@@ -1,4 +1,5 @@
-const BACKEND_URL = 'http://localhost:5000/api';
+const BACKEND_URL = 'https://foodfair-backend.onrender.com/api';
+
 
 // --------------------- Utility ---------------------
 function generateOrderId() {
