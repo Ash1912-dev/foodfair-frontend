@@ -20,43 +20,77 @@ function formatDateTime(date) {
 // --------------------- Customer Page ---------------------
 const form = document.getElementById('orderForm');
 if (form) {
-  const menuItems = document.querySelectorAll('.menu-item');
+  const menuGrid = document.getElementById('menuGrid');
   const totalDisplay = document.getElementById('totalPrice');
   const selectedItemsDisplay = document.getElementById('selectedItems');
   const selectedItems = [];
 
-  menuItems.forEach(item => {
-    const itemName = item.dataset.name;
-    const itemPrice = parseFloat(item.dataset.price);
-    const plusBtn = item.querySelector('.btn-plus');
-    const minusBtn = item.querySelector('.btn-minus');
-    const qtySpan = item.querySelector('.item-qty');
+  // Load menu from backend
+  loadMenu();
 
-    plusBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const existing = selectedItems.find(i => i.name === itemName);
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        selectedItems.push({ name: itemName, price: itemPrice, quantity: 1 });
-      }
-      qtySpan.textContent = getQty(itemName);
-      updateCart();
-    });
+  async function loadMenu() {
+    try {
+      const res = await fetch(`${BACKEND_URL}/menu`);
+      const items = await res.json();
 
-    minusBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const index = selectedItems.findIndex(i => i.name === itemName);
-      if (index !== -1) {
-        selectedItems[index].quantity -= 1;
-        if (selectedItems[index].quantity <= 0) {
-          selectedItems.splice(index, 1);
+      menuGrid.innerHTML = items.map(item => `
+        <div class="menu-item" data-name="${item.name}" data-price="${item.price}">
+          <div class="menu-item-content">
+            <span class="emoji">${item.emoji}</span>
+            <h3>${item.name}</h3>
+            <p class="description">${item.description}</p>
+            <div class="price">₹${item.price}</div>
+            <div class="quantity-controls">
+              <button type="button" class="btn-minus">➖</button>
+              <span class="item-qty">0</span>
+              <button type="button" class="btn-plus">➕</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      bindQuantityButtons();
+    } catch (err) {
+      menuGrid.innerHTML = "<p>❌ Failed to load menu</p>";
+    }
+  }
+
+  function bindQuantityButtons() {
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    menuItems.forEach(item => {
+      const itemName = item.dataset.name;
+      const itemPrice = parseFloat(item.dataset.price);
+      const plusBtn = item.querySelector('.btn-plus');
+      const minusBtn = item.querySelector('.btn-minus');
+      const qtySpan = item.querySelector('.item-qty');
+
+      plusBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const existing = selectedItems.find(i => i.name === itemName);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          selectedItems.push({ name: itemName, price: itemPrice, quantity: 1 });
         }
-      }
-      qtySpan.textContent = getQty(itemName);
-      updateCart();
+        qtySpan.textContent = getQty(itemName);
+        updateCart();
+      });
+
+      minusBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const index = selectedItems.findIndex(i => i.name === itemName);
+        if (index !== -1) {
+          selectedItems[index].quantity -= 1;
+          if (selectedItems[index].quantity <= 0) {
+            selectedItems.splice(index, 1);
+          }
+        }
+        qtySpan.textContent = getQty(itemName);
+        updateCart();
+      });
     });
-  });
+  }
 
   function getQty(itemName) {
     const item = selectedItems.find(i => i.name === itemName);
@@ -74,7 +108,6 @@ if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Check toggle status
     try {
       const res = await fetch(`${BACKEND_URL}/settings`);
       const data = await res.json();
@@ -117,10 +150,9 @@ if (form) {
           <p>Please show this Order ID at the counter.</p>`;
         resultDiv.classList.add('show');
 
-        // Reset everything
         form.reset();
         selectedItems.length = 0;
-        menuItems.forEach(item => item.querySelector('.item-qty').textContent = '0');
+        document.querySelectorAll('.item-qty').forEach(span => span.textContent = '0');
         totalDisplay.textContent = '0.00';
         selectedItemsDisplay.innerHTML = '';
 
@@ -136,6 +168,7 @@ if (form) {
     }
   });
 }
+
 
 
 // --------------------- Admin Login Page ---------------------
