@@ -180,6 +180,8 @@ if (loginForm) {
       alert("❌ Login error");
     }
   });
+  loadMenuItems();
+
 }
 
 function logoutAdmin() {
@@ -190,6 +192,65 @@ function logoutAdmin() {
 // --------------------- Admin Panel Logic ---------------------
 let orders = [];
 let currentFilter = 'all';
+let editingMenuId = null;
+
+
+
+async function loadMenuItems() {
+  const res = await fetch(`${BACKEND_URL}/menu`);
+  const items = await res.json();
+  const container = document.getElementById('menuList');
+
+  container.innerHTML = items.map(item => `
+    <div class="menu-admin-item">
+      <span>${item.emoji} <strong>${item.name}</strong> - ₹${item.price}</span>
+      <div>
+        <button onclick="editMenuItem('${item._id}', '${item.name}', '${item.emoji}', '${item.description}', ${item.price})">✏️</button>
+        <button onclick="deleteMenuItem('${item._id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editMenuItem(id, name, emoji, description, price) {
+  editingMenuId = id;
+  document.getElementById('menuName').value = name;
+  document.getElementById('menuEmoji').value = emoji;
+  document.getElementById('menuDescription').value = description;
+  document.getElementById('menuPrice').value = price;
+}
+
+async function deleteMenuItem(id) {
+  if (!confirm("Delete this item?")) return;
+  await fetch(`${BACKEND_URL}/menu/${id}`, { method: 'DELETE' });
+  loadMenuItems();
+}
+
+document.getElementById('menuForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('menuName').value;
+  const emoji = document.getElementById('menuEmoji').value;
+  const description = document.getElementById('menuDescription').value;
+  const price = parseFloat(document.getElementById('menuPrice').value);
+
+  const payload = { name, emoji, description, price };
+
+  const url = editingMenuId
+    ? `${BACKEND_URL}/menu/${editingMenuId}`
+    : `${BACKEND_URL}/menu`;
+  const method = editingMenuId ? 'PUT' : 'POST';
+
+  await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  editingMenuId = null;
+  e.target.reset();
+  loadMenuItems();
+});
 
 function bindAdminActions() {
   document.getElementById('toggleOrder')?.addEventListener('change', toggleOrdering);

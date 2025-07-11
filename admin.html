@@ -63,6 +63,21 @@
           <p>LOADING ORDERS...</p>
         </div>
       </div>
+
+      <!-- 🍽️ Menu Management Section -->
+      <div class="menu-admin-panel">
+        <h2>🍽️ Manage Menu</h2>
+        <form id="menuForm">
+          <input type="text" id="menuName" placeholder="Item Name" required />
+          <input type="text" id="menuEmoji" placeholder="Pic" required />
+          <input type="text" id="menuDescription" placeholder="Description" />
+          <input type="number" id="menuPrice" placeholder="Price" required />
+          <button type="submit">Add / Update Item</button>
+        </form>
+
+        <div id="menuList" class="menu-list"></div>
+      </div>
+
     </div>
   </div>
 

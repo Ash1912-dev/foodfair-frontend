@@ -873,3 +873,32 @@ input[type="text"]::placeholder {
   margin-left: 4px;
   cursor: pointer;
 }
+
+/* Style inputs inside menu form */
+#menuForm input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Style for Add / Update Button */
+#menuForm button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#menuForm button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+
