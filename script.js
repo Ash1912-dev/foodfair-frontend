@@ -440,7 +440,7 @@ async function exportDailyReport() {
 
     orders.forEach(order => {
       order.items.forEach(item => {
-        csvContent += `${order.orderId},"${order.name}","${item.name}",${item.quantity},${item.price},${order.total},"${new Date(order.timestamp).toLocaleString()}", ${order.served},${order.paid},${order.closed}\n`;
+        csvContent += `${order.orderId},"${order.name}","${item.name}",${item.quantity},${item.price},${order.total},"${new Date(order.timestamp).toLocaleString()}",${order.served ? 'Yes' : 'No'},${order.paid ? 'Yes' : 'No'},${order.closed ? 'Yes' : 'No'}\n`;
       });
     });
 
