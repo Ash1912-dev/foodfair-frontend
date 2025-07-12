@@ -901,24 +901,7 @@ input[type="text"]::placeholder {
   background-color: #45a049;
 }
 
-/* Daily Report Button Style */
-.btn-export {
-  background-color: white;
-  color: #495057;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.2);
-}
 
-.btn-export:hover {
-  background-color: #007bff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
-}
+
 
 
