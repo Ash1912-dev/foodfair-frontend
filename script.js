@@ -440,8 +440,7 @@ async function exportDailyReport() {
 
     orders.forEach(order => {
       order.items.forEach(item => {
-        csvContent += `${order.orderId},"${order.name}","${item.name}",${item.quantity},${item.price},${order.total},"${new Date(order.timestamp).toLocaleString()}",
-        ${order.served},${order.paid},${order.closed}\n`;
+        csvContent += `${order.orderId},"${order.name}","${item.name}",${item.quantity},${item.price},${order.total},"${new Date(order.timestamp).toLocaleString()}", ${order.served},${order.paid},${order.closed}\n`;
       });
     });
 
@@ -459,29 +458,5 @@ async function exportDailyReport() {
     alert("❌ Could not export report.");
   }
 }
-
-window.exportReportToExcel = async function () {
-  try {
-    const res = await fetch(`${BACKEND_URL}/reports/daily`);
-    const data = await res.json();
-
-    let csv = `Date,${data.date}\nTotal Orders,${data.totalOrders}\nTotal Revenue,${data.totalRevenue}\n\nItem,Quantity\n`;
-    for (const item in data.itemsSold) {
-      csv += `${item},${data.itemsSold[item]}\n`;
-    }
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Funfair_Report_${data.date}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  } catch (err) {
-    alert("❌ Failed to export report");
-  }
-};
 
 
