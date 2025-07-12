@@ -422,3 +422,41 @@ async function loadOrderingStatus() {
     console.error("❌ Could not fetch ordering status");
   }
 }
+
+// --------------------- Daily Report Export ---------------------
+document.getElementById('exportReportBtn')?.addEventListener('click', exportDailyReport);
+
+async function exportDailyReport() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/orders`);
+    const orders = await res.json();
+
+    if (orders.length === 0) {
+      alert("No orders to export.");
+      return;
+    }
+
+    let csvContent = "Order ID,Customer Name,Item Name,Quantity,Price,Total,Timestamp,Served,Paid,Closed\n";
+
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        csvContent += `${order.orderId},"${order.name}","${item.name}",${item.quantity},${item.price},${order.total},"${new Date(order.timestamp).toLocaleString()}",
+        ${order.served},${order.paid},${order.closed}\n`;
+      });
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'daily_report.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('❌ Failed to export report:', error);
+    alert("❌ Could not export report.");
+  }
+}
+

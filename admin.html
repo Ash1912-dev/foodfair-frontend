@@ -31,6 +31,8 @@
           </label>
           <button id="clearOrdersBtn" class="btn-clear">🗑 CLEAR ALL ORDERS</button>
           <button id="logoutBtn">🚪 Logout</button>
+          <button id="exportReportBtn">📄 Export Daily Report</button>
+
 
           <div class="stats">
             <div class="stat-item">
@@ -55,6 +57,8 @@
         <button class="filter-btn" data-filter="served">SERVED</button>
         <button class="filter-btn" data-filter="paid">PAID</button>
         <button class="filter-btn" data-filter="closed">CLOSED</button>
+        <button id="exportReportBtn" class="btn-export">📄 Daily Report</button>
+
       </div>
 
       <div id="orders" class="orders-container">
@@ -63,6 +67,13 @@
           <p>LOADING ORDERS...</p>
         </div>
       </div>
+
+      <div id="reportSection" style="display: none;">
+        <h3>📊 Daily Report</h3>
+        <div id="reportData"></div>
+        <button onclick="exportReportToExcel()">⬇ Export to Excel</button>
+      </div>
+
 
       <!-- 🍽️ Menu Management Section -->
       <div class="menu-admin-panel">
