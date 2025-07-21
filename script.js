@@ -1,5 +1,5 @@
 const BACKEND_URL = 'https://foodfair-backend.onrender.com/api';
-const AUTO_LOGOUT_TIME = 15 * 60 * 1000; // 15 minutes
+const AUTO_LOGOUT_TIME = 10 * 1000; // 15 minutes
 let logoutTimer;
 
 
