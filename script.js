@@ -1,4 +1,7 @@
 const BACKEND_URL = 'https://foodfair-backend.onrender.com/api';
+const AUTO_LOGOUT_TIME = 15 * 60 * 1000; // 15 minutes
+let logoutTimer;
+
 
 // --------------------- Utility ---------------------
 function generateOrderId() {
@@ -206,6 +209,7 @@ if (loginForm) {
         bindAdminActions();
         loadOrders();
         loadOrderingStatus();
+        startLogoutTimer();
       } else {
         alert(data.error || "❌ Invalid credentials.");
       }
@@ -284,6 +288,16 @@ document.getElementById('menuForm').addEventListener('submit', async (e) => {
   e.target.reset();
   loadMenuItems();
 });
+
+
+function startLogoutTimer() {
+  clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(() => {
+    alert("⏳ Session expired due to inactivity.");
+    logoutAdmin();
+  }, AUTO_LOGOUT_TIME);
+}
+
 
 function bindAdminActions() {
   document.getElementById('toggleOrder')?.addEventListener('change', toggleOrdering);
@@ -458,5 +472,14 @@ async function exportDailyReport() {
     alert("❌ Could not export report.");
   }
 }
+
+['click', 'keydown', 'mousemove'].forEach(event => {
+  document.addEventListener(event, () => {
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+      startLogoutTimer();
+    }
+  });
+});
+
 
 
