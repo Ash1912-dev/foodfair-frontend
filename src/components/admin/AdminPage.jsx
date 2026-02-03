@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLogin from './AdminLogin';
 import OrdersPanel from './OrdersPanel';
@@ -16,6 +16,17 @@ function AdminPage() {
   const [currentFilter, setCurrentFilter] = useState('all');
   const [logoutTimer, setLogoutTimer] = useState(null);
 
+  const startLogoutTimer = useCallback(() => {
+    if (logoutTimer) clearTimeout(logoutTimer);
+    
+    const timer = setTimeout(() => {
+      alert("⏳ Session expired due to inactivity.");
+      handleLogout();
+    }, AUTO_LOGOUT_TIME);
+    
+    setLogoutTimer(timer);
+  }, [logoutTimer]);
+
   useEffect(() => {
     const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
     if (loggedIn) {
@@ -24,7 +35,7 @@ function AdminPage() {
       loadOrderingStatus();
       startLogoutTimer();
     }
-  }, []);
+  }, [startLogoutTimer]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -39,18 +50,7 @@ function AdminPage() {
         });
       };
     }
-  }, [isLoggedIn]);
-
-  const startLogoutTimer = () => {
-    if (logoutTimer) clearTimeout(logoutTimer);
-    
-    const timer = setTimeout(() => {
-      alert("⏳ Session expired due to inactivity.");
-      handleLogout();
-    }, AUTO_LOGOUT_TIME);
-    
-    setLogoutTimer(timer);
-  };
+  }, [isLoggedIn, startLogoutTimer]);
 
   const loadOrders = async () => {
     try {
