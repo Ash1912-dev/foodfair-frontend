@@ -16,6 +16,12 @@ function AdminPage() {
   const [currentFilter, setCurrentFilter] = useState('all');
   const [logoutTimer, setLogoutTimer] = useState(null);
 
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('adminLoggedIn');
+    if (logoutTimer) clearTimeout(logoutTimer);
+    window.location.reload();
+  }, [logoutTimer]);
+
   const startLogoutTimer = useCallback(() => {
     if (logoutTimer) clearTimeout(logoutTimer);
     
@@ -25,7 +31,7 @@ function AdminPage() {
     }, AUTO_LOGOUT_TIME);
     
     setLogoutTimer(timer);
-  }, [logoutTimer]);
+  }, [logoutTimer, handleLogout]);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
@@ -76,12 +82,6 @@ function AdminPage() {
     loadOrders();
     loadOrderingStatus();
     startLogoutTimer();
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('adminLoggedIn');
-    if (logoutTimer) clearTimeout(logoutTimer);
-    window.location.reload();
   };
 
   const handleToggleOrdering = async (checked) => {
