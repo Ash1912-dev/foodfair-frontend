@@ -1,6 +1,7 @@
 import React from 'react';
 import { updateOrderStatus } from '../../services/api';
 import { formatDateTime } from '../../utils/helpers';
+import { io } from "socket.io-client";
 
 function OrdersPanel({ orders, onUpdate }) {
   const handleStatusChange = async (id, field, value) => {
@@ -80,7 +81,6 @@ function OrdersPanel({ orders, onUpdate }) {
 
 export default OrdersPanel;
 
-import { io } from "socket.io-client";
 const socket = io({ reconnection: true });
 
 socket.on('new_order', (order) => {

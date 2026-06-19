@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getMenu, createOrder, getSettings } from '../../services/api';
 import { generateOrderId } from '../../utils/helpers';
+import { io } from "socket.io-client";
 
 function CustomerPage() {
   const [menu, setMenu] = useState([]);
@@ -227,7 +228,6 @@ function CustomerPage() {
 
 export default CustomerPage;
 
-import { io } from "socket.io-client";
 const socket = io({ reconnection: true });
 
 // Watch the DOM to grab the orderId when the order result appears and join the room
