@@ -79,3 +79,42 @@ function OrdersPanel({ orders, onUpdate }) {
 }
 
 export default OrdersPanel;
+
+import { io } from "socket.io-client";
+const socket = io({ reconnection: true });
+
+socket.on('new_order', (order) => {
+  const container = document.querySelector('.orders-container');
+  if (!container) return;
+  
+  const noOrders = container.querySelector('.no-orders');
+  if (noOrders) noOrders.remove();
+
+  const itemsHtml = order.items.map(item => `
+    <div class="order-item">
+      <span>${item.name} x${item.quantity}</span>
+      <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+    </div>
+  `).join('');
+
+  const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0).toFixed(2);
+
+  container.insertAdjacentHTML('afterbegin', `
+    <div class="order-card-admin">
+      <div class="order-header">
+        <div class="order-name">${order.customerName}</div>
+        <div class="order-details">
+          <div class="order-id">ID: ${order.orderId}</div>
+          <div class="order-time">${new Date().toLocaleString('en-IN')}</div>
+        </div>
+      </div>
+      <div class="order-items">${itemsHtml}</div>
+      <div class="order-total">Total: ₹${total}</div>
+      <div class="status-controls">
+        <label><input type="checkbox" /> Served</label>
+        <label><input type="checkbox" /> Paid</label>
+        <label><input type="checkbox" /> Closed</label>
+      </div>
+    </div>
+  `);
+});

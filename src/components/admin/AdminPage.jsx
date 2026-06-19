@@ -141,14 +141,28 @@ function AdminPage() {
           <button onClick={loadOrders} className="btn-refresh">
             🔄 REFRESH ORDERS
           </button>
-          <label>
-            <input 
-              type="checkbox" 
-              checked={allowOrdering}
-              onChange={(e) => handleToggleOrdering(e.target.checked)}
-            />
-            <span>🛒 Accepting Orders</span>
-          </label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.1)', padding: '5px 10px', borderRadius: '8px' }}>
+            <div style={{
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+              fontSize: '0.9rem',
+              color: 'white',
+              backgroundColor: allowOrdering ? '#28a745' : '#dc3545',
+              boxShadow: allowOrdering ? '0 0 8px #28a745' : '0 0 8px #dc3545',
+              transition: 'all 0.3s ease'
+            }}>
+              {allowOrdering ? '🟢 LIVE' : '🔴 CLOSED'}
+            </div>
+            <label style={{ margin: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <input 
+                type="checkbox" 
+                checked={allowOrdering}
+                onChange={(e) => handleToggleOrdering(e.target.checked)}
+              />
+              <span>🛒 Accepting Orders</span>
+            </label>
+          </div>
           <button onClick={handleClearOrders} className="btn-clear">
             🗑 CLEAR ALL ORDERS
           </button>

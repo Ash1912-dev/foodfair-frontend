@@ -9,6 +9,7 @@ function CustomerPage() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isMenuLoading, setIsMenuLoading] = useState(true);
 
   useEffect(() => {
     loadMenu();
@@ -20,6 +21,8 @@ function CustomerPage() {
       setMenu(items);
     } catch (err) {
       console.error('Failed to load menu', err);
+    } finally {
+      setIsMenuLoading(false);
     }
   };
 
@@ -109,6 +112,20 @@ function CustomerPage() {
       setLoading(false);
     }
   };
+
+  if (isMenuLoading) {
+    return (
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div className="loading-spinner" style={{ height: 'auto', textAlign: 'center' }}>
+          <div className="spinner-large" style={{ margin: '0 auto 20px auto' }}></div>
+          <h2 style={{ color: '#2c3e50', marginBottom: '10px' }}>Your menu is loading...</h2>
+          <p style={{ color: '#6c757d', maxWidth: '400px', margin: '0 auto' }}>
+            Please wait a few seconds while the server wakes up to serve you!
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -209,3 +226,29 @@ function CustomerPage() {
 }
 
 export default CustomerPage;
+
+import { io } from "socket.io-client";
+const socket = io({ reconnection: true });
+
+// Watch the DOM to grab the orderId when the order result appears and join the room
+const observer = new MutationObserver(() => {
+  const resultDiv = document.querySelector('.result.show');
+  if (resultDiv && !resultDiv.dataset.socketJoined) {
+    const orderIdNode = Array.from(resultDiv.querySelectorAll('p')).find(p => p.textContent.includes('Order ID:'));
+    if (orderIdNode) {
+      socket.emit('join_order', orderIdNode.textContent.replace('Order ID:', '').trim());
+      resultDiv.dataset.socketJoined = 'true';
+    }
+  }
+});
+observer.observe(document.body, { childList: true, subtree: true });
+
+socket.on('order_status_updated', ({ orderId, newStatus }) => {
+  const resultDiv = document.querySelector('.result.show');
+  if (resultDiv && resultDiv.textContent.includes(orderId)) {
+    let badge = resultDiv.querySelector('.status-badge') || document.createElement('p');
+    badge.className = 'status-badge';
+    badge.innerHTML = `<strong>Status:</strong> <span style="text-transform: capitalize;">${newStatus}</span>`;
+    if (!badge.parentNode) resultDiv.appendChild(badge);
+  }
+});
