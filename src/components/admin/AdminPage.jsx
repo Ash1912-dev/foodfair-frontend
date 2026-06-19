@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLogin from './AdminLogin';
 import OrdersPanel from './OrdersPanel';
@@ -14,24 +14,22 @@ function AdminPage() {
   const [orders, setOrders] = useState([]);
   const [allowOrdering, setAllowOrdering] = useState(true);
   const [currentFilter, setCurrentFilter] = useState('all');
-  const [logoutTimer, setLogoutTimer] = useState(null);
+  const logoutTimerRef = useRef(null);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('adminLoggedIn');
-    if (logoutTimer) clearTimeout(logoutTimer);
+    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
     window.location.reload();
-  }, [logoutTimer]);
+  }, []);
 
   const startLogoutTimer = useCallback(() => {
-    if (logoutTimer) clearTimeout(logoutTimer);
+    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
     
-    const timer = setTimeout(() => {
+    logoutTimerRef.current = setTimeout(() => {
       alert("⏳ Session expired due to inactivity.");
       handleLogout();
     }, AUTO_LOGOUT_TIME);
-    
-    setLogoutTimer(timer);
-  }, [logoutTimer, handleLogout]);
+  }, [handleLogout]);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
