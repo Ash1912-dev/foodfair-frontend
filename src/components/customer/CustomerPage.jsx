@@ -11,9 +11,30 @@ function CustomerPage() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isMenuLoading, setIsMenuLoading] = useState(true);
+  const [allowOrdering, setAllowOrdering] = useState(true);
+
+  const loadSettings = async () => {
+    try {
+      const settings = await getSettings();
+      setAllowOrdering(settings.allowOrdering);
+    } catch (err) {
+      console.error('Failed to load settings', err);
+    }
+  };
 
   useEffect(() => {
     loadMenu();
+    loadSettings();
+
+    socket.on('menu_updated', loadMenu);
+    socket.on('settings_updated', (data) => {
+      setAllowOrdering(data.allowOrdering);
+    });
+
+    return () => {
+      socket.off('menu_updated', loadMenu);
+      socket.off('settings_updated');
+    };
   }, []);
 
   const loadMenu = async () => {
@@ -136,6 +157,11 @@ function CustomerPage() {
       </header>
 
       <div className="order-card">
+        {allowOrdering === false && (
+          <div style={{ backgroundColor: '#dc3545', color: 'white', padding: '10px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px', fontWeight: 'bold' }}>
+            🛑 Ordering is currently paused by the admin. Please try again later.
+          </div>
+        )}
         <form id="orderForm" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">👤 Your Name</label>
@@ -195,8 +221,15 @@ function CustomerPage() {
             </div>
           </div>
 
-          <button type="submit" className={`btn-order ${loading ? 'loading' : ''}`}>
-            <span className="btn-text">🎉 Place Order</span>
+          <button 
+            type="submit" 
+            className={`btn-order ${loading ? 'loading' : ''}`}
+            disabled={!allowOrdering}
+            style={!allowOrdering ? { backgroundColor: '#dc3545', cursor: 'not-allowed', opacity: 0.8 } : {}}
+          >
+            <span className="btn-text">
+              {allowOrdering ? '🎉 Place Order' : '🛑 Ordering Closed'}
+            </span>
             <div className="btn-loading">
               <div className="spinner"></div>
               Processing...
