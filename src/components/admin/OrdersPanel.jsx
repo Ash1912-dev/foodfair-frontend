@@ -81,7 +81,7 @@ function OrdersPanel({ orders, onUpdate }) {
 
 export default OrdersPanel;
 
-const socket = io({ reconnection: true });
+const socket = io("https://foodfair-backend.onrender.com", { reconnection: true });
 
 socket.on('new_order', (order) => {
   const container = document.querySelector('.orders-container');

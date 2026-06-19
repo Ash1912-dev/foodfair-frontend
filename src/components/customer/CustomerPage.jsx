@@ -228,7 +228,7 @@ function CustomerPage() {
 
 export default CustomerPage;
 
-const socket = io({ reconnection: true });
+const socket = io("https://foodfair-backend.onrender.com", { reconnection: true });
 
 // Watch the DOM to grab the orderId when the order result appears and join the room
 const observer = new MutationObserver(() => {
